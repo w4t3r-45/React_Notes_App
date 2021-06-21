@@ -17,14 +17,34 @@ router.get('/notes', (req, res) => {
 
 // fetching notes by category name
 
-router.get('/notes/:catname',(req,res)=>{
-  
+router.get('/notes/cat/:catname',(req,res)=>{
+  let cname = req.params.catname.toUpperCase();
+  Notes.find({
+    "category":cname
+  }).then(data => {
+    res.status(200).json(data);
+  }).catch(err => {
+    res.status(500).json({
+      "error": err
+    })
+  });
 });
 
-// fetching notes bt id 
+// fetching notes by id 
 
 router.get('/notes/:id',(req,res)=>{
+  let searchQuerry = { _id: req.params.id };
   
+  Notes.find(searchQuerry).then(data => {
+    data.length === 0 ? res.status(404).json({
+      "message":"NOTE NOT FOUND"
+    }) : res.status(200).json(data);
+    
+  }).catch(err => {
+    res.status(500).json({
+      "error": err
+    })
+  });
 });
 
 // adding new note (POST)
@@ -32,7 +52,7 @@ router.get('/notes/:id',(req,res)=>{
 router.post('/notes/new', (req, res) => {
   let NewNote = {
     "title": req.body.title,
-    "category": req.body.category,
+    "category": req.body.category.toUpperCase(),
     "content": req.body.content
   };
   const { title, category, content } = NewNote;
@@ -61,16 +81,16 @@ router.post('/notes/new', (req, res) => {
 // updating an existing note
 router.put('/notes/:id', (req, res) => {
   let searchQuerry = { _id: req.params.id };
-  if (id !== '') {
+  if (req.params.id !== '') {
     Notes.updateOne(searchQuerry, {
       $set: {
         "title": req.body.title,
-        "category": req.body.category,
+        "category": req.body.category.toUpperCase(),
         "content": req.body.content
       }}).then(data =>{
         res.status(200).json({
           "data":data,
-          "status":"UPDATED SUCCESSFULLY"
+          "status":"UPDATED_SUCCESSFULLY"
         })
       }).catch(err =>{
         res.status(500).json({
@@ -89,15 +109,16 @@ router.put('/notes/:id', (req, res) => {
 router.delete('/notes/delete/:id',(req,res)=>{
   let searchQuery = {_id : req.params.id};
   if(req.params.id !== ''){
-  Notes.deleteOne(searchQuery).then(data=>{
+  Notes.deleteOne(searchQuery).then( _ =>{
     res.status(200).json({
-      "status":"DELETED SUCCESSFULLY"
+      "status":"DELETED_SUCCESSFULLY"
+    })
     }).catch(err =>{
       res.status(500).json({
         "error":err
       })
     })
-  })}else{
+  }else{
     res.status(500).json({
       "error":"please set ID"
     })
@@ -119,7 +140,7 @@ router.get('/categories', (req, res) => {
 
 router.post('/category/new', (req, res) => {
   let NewCat = {
-    "name": req.body.name,
+    "name": req.body.name.toUpperCase(),
     };
   const { name } = NewCat;
   // check if they are not Empty 
@@ -140,6 +161,27 @@ router.post('/category/new', (req, res) => {
   } else {
     res.status(500).json({
       "error": "please fill the field"
+    })
+  }
+});
+
+// deleting an existing category
+
+router.delete('/category/delete/:id',(req,res)=>{
+  let searchQuery = {_id : req.params.id};
+  if(req.params.id !== ''){
+    Categories.deleteOne(searchQuery).then( _ =>{
+    res.status(200).json({
+      "status":"DELETED_SUCCESSFULLY"
+    })
+    }).catch(err =>{
+      res.status(500).json({
+        "error":err
+      })
+    })
+  }else{
+    res.status(500).json({
+      "error":"please set ID"
     })
   }
 });
