@@ -23,7 +23,7 @@ export default function Home({ _ }) {
           />
           <Container></Container>
           {/* in store we have showNewNote , showNewCategory to know what to render */}
-          {  showNote  && <NewNote />}
+          {  showNote  && <NewNote/>}
           {  showCat &&  <NewCategory/>}
           <ItemsList/>
         </Grid.Column>

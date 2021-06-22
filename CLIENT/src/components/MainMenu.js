@@ -24,6 +24,9 @@ export default function MainMenu({ _ }) {
     dispatch(showCat());
   }
 
+  const notes_count = useSelector(state => state.ui.notes).length;
+  const cat_count = useSelector(state => state.ui.categories).length;
+
 
   return (
     <>
@@ -32,7 +35,7 @@ export default function MainMenu({ _ }) {
           name='inbox'
           active={activeItem === 'inbox'}
           onClick={handleItemClick} >
-          <Label color='teal'>1</Label>
+          <Label color='teal'>{notes_count}</Label>
           All Notes
       </Menu.Item>
 
@@ -40,7 +43,7 @@ export default function MainMenu({ _ }) {
           name='spam'
           active={activeItem === 'spam'}
           onClick={handleItemClick}>
-          <Label color="blue">51</Label>
+          <Label color="blue">{cat_count}</Label>
           Available Categories
       </Menu.Item>
           <Dropdown text='Show by Category' pointing='left' fluid className='link item'>
